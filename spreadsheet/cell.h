@@ -5,6 +5,7 @@
 
 #include <functional>
 #include <unordered_set>
+#include <optional>
 
 class Sheet;
 
@@ -19,8 +20,12 @@ public:
     Value GetValue() const override;
     std::string GetText() const override;
     std::vector<Position> GetReferencedCells() const override;
+    const std::unordered_set<Cell*>& GetDependentCells() const;
 
-    bool IsReferenced() const;
+    void AddReferencedCell(Cell* cell);
+    void RemoveReferencedCell(Cell* cell);
+    void AddDependentCell(Cell* cell);
+    void RemoveDependentCell(Cell* cell);
 
 private:
     class Impl;
@@ -28,9 +33,15 @@ private:
     class TextImpl;
     class FormulaImpl;
 
+    Sheet& sheet_;
     std::unique_ptr<Impl> impl_;
+    mutable std::optional<Value> cache_;
+    mutable bool isCacheInvalidated_ = false;
+    std::unordered_set<Cell*> referencedCells_;
+    std::unordered_set<Cell*> dependentCells_;
 
-    // Добавьте поля и методы для связи с таблицей, проверки циклических 
-    // зависимостей, графа зависимостей и т. д.
-
+    void InvalidateCache();
+    void UpdateDependencies();
 };
+
+#include "sheet.h"
