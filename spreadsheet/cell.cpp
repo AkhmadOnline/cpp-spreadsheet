@@ -102,7 +102,7 @@ void Cell::Set(std::string text) {
 }
 
 void Cell::Clear() {
-    impl_.reset(new EmptyImpl());
+    Set("");
     InvalidateCache();
     UpdateDependencies();
 }
