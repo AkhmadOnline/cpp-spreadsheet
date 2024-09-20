@@ -51,7 +51,7 @@ public:
     }
 
     std::string GetText() const override {
-        return "=" + formula_->GetExpression();
+        return FORMULA_SIGN + formula_->GetExpression();
     }
 
     CellInterface::Value Evaluate(const SheetInterface& sheet) const {
@@ -80,7 +80,6 @@ Cell::Cell(Sheet& sheet) : sheet_(sheet) {}
 Cell::~Cell() {}
 
 void Cell::Set(std::string text) {
-    impl_.reset(); 
     cache_.reset();
     if (text.empty()) {
         impl_ = std::make_unique<EmptyImpl>();
@@ -103,8 +102,6 @@ void Cell::Set(std::string text) {
 
 void Cell::Clear() {
     Set("");
-    InvalidateCache();
-    UpdateDependencies();
 }
 
 CellInterface::Value Cell::GetValue() const {
